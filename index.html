@@ -404,8 +404,6 @@ function handleFiles(files) {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
 import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-```
-// *** הדבק כאן את הקונפיגורציה שקיבלת מפיירבייס ***
 const firebaseConfig = {
     apiKey: "AIzaSyDYUhtt6X97kqve7WQOstbhJPQ88em096c",
     authDomain: "our-wedding-1c7be.firebaseapp.com",
@@ -417,8 +415,6 @@ const firebaseConfig = {
     measurementId: "G-LP7NPTM6X9"
   };
 
-    // ... הדבק את הקוד מה-Console כאן ..
-// *************************************************
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
