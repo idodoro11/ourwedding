@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ליאוראל ועידודי - Wedding Planner</title>
+
+```
+<link rel="preconnect" href="<https://fonts.googleapis.com>">
+<link rel="preconnect" href="<https://fonts.gstatic.com>" crossorigin>
+<link href="<https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Varela+Round&display=swap>" rel="stylesheet">
+
+<link rel="stylesheet" href="<https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css>">
+
+<script src="<https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js>"></script>
+
+<style>
+    :root {
+        --primary: #d4a5a5; --secondary: #9caf88; --accent: #d4af37;
+        --bg: #fdfcfb; --text-main: #4a4a4a; --text-sub: #7a7a7a;
+        --radius: 20px; --shadow: 0 20px 50px rgba(0,0,0,0.15); --input-bg: #fdfdfd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+        font-family: 'Varela Round', sans-serif; color: var(--text-main);
+        background-image: url('images/save the date.png'); background-size: cover;
+        background-position: center; background-attachment: fixed; background-repeat: no-repeat;
+        min-height: 100vh; display: flex; justify-content: center; align-items: flex-start;
+        padding: 20px; padding-bottom: 140px; /* מקום לסרגל התחתון */
+    }
+    body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); z-index: -1; }
+
+    .container {
+        width: 100%; max-width: 800px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: var(--radius); box-shadow: var(--shadow);
+        overflow: hidden; margin-top: 10px; margin-bottom: 20px;
+        border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    /* Header */
+    header { text-align: center; padding: 30px 20px; background: linear-gradient(to bottom, #fff, #f9f9f9); display: flex; flex-direction: column; align-items: center; }
+    .header-img-container { width: 100px; height: 100px; border-radius: 50%; border: 3px dashed var(--accent); padding: 4px; background: white; margin-bottom: 10px; overflow: hidden; }
+    .header-img-container img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    h1 { font-family: 'Amatic SC', cursive; font-weight: 700; color: var(--text-main); font-size: 3.5rem; line-height: 1; margin: 0; }
+    h1 span { color: var(--primary); font-size: 0.8em; }
+
+    /* Countdown */
+    .countdown-container { margin-top: 15px; display: flex; gap: 10px; justify-content: center; font-family: 'Amatic SC', cursive; }
+    .time-box { background: white; border: 1px solid var(--primary); border-radius: 10px; padding: 5px 12px; text-align: center; min-width: 60px; }
+    .time-val { font-size: 1.6rem; font-weight: 700; color: var(--secondary); line-height: 1; }
+    .time-label { font-size: 0.9rem; color: var(--text-sub); }
+    .date-edit-btn { background: none; border: none; cursor: pointer; color: var(--text-sub); font-size: 0.9rem; margin-top: 5px; text-decoration: underline; }
+
+    /* Progress */
+    .progress-wrapper { width: 85%; margin: 20px auto 0; }
+    .progress-track { background-color: #e9ecef; border-radius: 50px; height: 12px; overflow: hidden; border: 1px solid white; }
+    .progress-fill { height: 100%; background: repeating-linear-gradient(45deg, var(--primary), var(--primary) 10px, #eecaca 10px, #eecaca 20px); width: 0%; transition: width 0.6s; border-radius: 50px; }
+    .progress-label { margin-top: 5px; font-size: 1.2rem; color: var(--text-sub); font-family: 'Amatic SC', cursive; font-weight: 700; text-align: center; }
+
+    /* Navigation */
+    .nav-tabs { display: flex; justify-content: center; background: #fff; padding: 10px; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+    .tab-btn { background: #f8f9fa; border: 1px solid #eee; padding: 8px 16px; font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 1.3rem; cursor: pointer; color: var(--text-sub); transition: all 0.2s; border-radius: 50px; display: flex; align-items: center; gap: 6px; }
+    .tab-btn.active { background-color: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 4px 10px rgba(156, 175, 136, 0.3); }
+
+    /* Content */
+    .tab-content { display: none; padding: 25px 20px; animation: fadeIn 0.3s ease; }
+    .tab-content.active { display: block; }
+    h2 { font-family: 'Amatic SC', cursive; color: var(--text-main); margin-bottom: 20px; font-size: 2.2rem; font-weight: 700; display: flex; align-items: center; gap: 10px; border-bottom: 2px dashed var(--primary); padding-bottom: 5px; }
+
+    /* Grid & Cards */
+    .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .vendor-card { background: white; border: 1px solid #f0f0f0; border-radius: 16px; padding: 20px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.03); transition: transform 0.2s; }
+    .vendor-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+
+    .card-title-input { font-family: 'Amatic SC', cursive; font-size: 1.8rem; font-weight: 700; color: var(--secondary); border: none; background: transparent; width: 100%; margin-bottom: 10px; border-bottom: 1px dashed transparent; }
+    .card-title-input:focus { outline: none; border-bottom: 1px dashed var(--accent); }
+
+    .form-group { margin-bottom: 12px; }
+    label { display: block; margin-bottom: 4px; font-size: 0.9rem; font-weight: 600; color: var(--text-sub); }
+    input, textarea, select { width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 10px; font-family: 'Varela Round', sans-serif; font-size: 1rem; background: var(--input-bg); color: var(--text-main); }
+    input:focus { outline: none; border-color: var(--secondary); }
+
+    /* Task List */
+    .category-header { margin-top: 25px; margin-bottom: 10px; color: var(--accent); font-family: 'Amatic SC', cursive; font-weight: 700; font-size: 1.8rem; display: flex; align-items: center; gap: 8px; }
+    .task-item { background: rgba(255,255,255,0.7); border-bottom: 1px solid #f0f0f0; padding: 12px; display: flex; align-items: center; gap: 12px; border-radius: 8px; margin-bottom: 5px; }
+    .task-checkbox { width: 22px; height: 22px; accent-color: var(--secondary); cursor: pointer; }
+    .task-title { font-weight: 500; font-size: 1.05rem; }
+    .task-item.completed .task-title { text-decoration: line-through; opacity: 0.5; }
+
+    /* Special Items */
+    .song-item, .timeline-item { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; background: #fff; padding: 12px; border-radius: 10px; border: 1px solid #eee; }
+    .drop-zone { width: 100%; min-height: 200px; border: 2px dashed #ccc; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-direction: column; background: #fafafa; cursor: pointer; overflow: hidden; }
+    .polaroid-frame { background: white; padding: 10px 10px 35px 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.15); transform: rotate(-2deg); max-width: 90%; display: none; }
+    .polaroid-frame img { width: 100%; display: block; }
+    .polaroid-caption { font-family: 'Amatic SC'; font-size: 1.5rem; text-align: center; margin-top: 10px; font-weight: 700; }
+
+    /* Bottom Bar */
+    .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #eee; padding: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 999; }
+    .budget-display { font-family: 'Amatic SC', cursive; font-size: 1.8rem; font-weight: 700; color: var(--text-main); }
+    .budget-amount { color: var(--secondary); }
+    .sync-status { font-size: 0.9rem; color: #2ecc71; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+
+    .add-btn { background: white; border: 2px dashed var(--secondary); color: var(--secondary); padding: 10px 30px; border-radius: 50px; font-family: 'Amatic SC'; font-size: 1.5rem; font-weight: 700; cursor: pointer; margin-top: 20px; width: 100%; }
+
+    @media (min-width: 600px) {
+        .bottom-bar { flex-direction: row; justify-content: space-between; padding: 15px 40px; }
+        .song-item, .timeline-item { flex-direction: row; align-items: center; }
+        .add-btn { width: auto; }
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+
+```
+
+</head>
+<body>
+
+<div class="container">
+<header>
+<div class="header-img-container"><img src="images/save the date.png" alt="Save the Date"></div>
+<h1>ליאוראל <span>♥</span> עידודי</h1>
+
+```
+    <div id="countdown" class="countdown-container">
+        <div class="time-box"><div class="time-val" id="days">00</div><div class="time-label">ימים</div></div>
+        <div class="time-box"><div class="time-val" id="hours">00</div><div class="time-label">שעות</div></div>
+        <div class="time-box"><div class="time-val" id="minutes">00</div><div class="time-label">דקות</div></div>
+        <div class="time-box"><div class="time-val" id="seconds">00</div><div class="time-label">שניות</div></div>
+    </div>
+    <button class="date-edit-btn" onclick="editDate()"><i class="fas fa-pencil-alt"></i> שנה תאריך</button>
+    <input type="date" id="eventDateInput" style="display:none; margin-top:10px;" onchange="updateEventDate(this.value)">
+
+    <div class="progress-wrapper">
+        <div class="progress-track"><div class="progress-fill" id="progressBar"></div></div>
+        <div class="progress-label">הושלמו: <span id="progressText">0%</span></div>
+    </div>
+</header>
+
+<nav class="nav-tabs">
+    <button class="tab-btn active" onclick="openTab(event, 'tasks')"><i class="fas fa-check"></i> משימות</button>
+    <button class="tab-btn" onclick="openTab(event, 'timeline')"><i class="fas fa-clock"></i> לו"ז</button>
+    <button class="tab-btn" onclick="openTab(event, 'branding')"><i class="fas fa-gift"></i> מיתוג</button>
+    <button class="tab-btn" onclick="openTab(event, 'playlist')"><i class="fas fa-music"></i> פלייליסט</button>
+    <button class="tab-btn" onclick="openTab(event, 'flowers')"><i class="fas fa-seedling"></i> פרחים</button>
+    <button class="tab-btn" onclick="openTab(event, 'vendors')"><i class="fas fa-camera"></i> ספקים</button>
+</nav>
+
+<main id="mainContent">
+    <section id="tasks" class="tab-content active">
+        <h2><i class="fas fa-clipboard-list"></i> צ'ק ליסט חתונה</h2>
+        <div class="task-list-container">
+            <div class="category-header"><i class="fas fa-music"></i> בידור ומוזיקה</div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">בחירת תקליטן או להקה</div></div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">בחירת שירים לאירוע</div></div>
+
+            <div class="category-header"><i class="fas fa-female"></i> כלה</div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">בחירת שמלת כלה</div></div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">סגירת איפור ושיער</div></div>
+
+            <div class="category-header"><i class="fas fa-utensils"></i> אוכל ושתייה</div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">בחירת קייטרינג</div></div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">טעימות</div></div>
+
+            <div class="category-header"><i class="fas fa-envelope"></i> הזמנות</div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">עיצוב והדפסה</div></div>
+            <div class="task-item"><input type="checkbox" class="task-checkbox" onchange="handleTaskChange(this)"><div class="task-title">אישורי הגעה</div></div>
+        </div>
+    </section>
+
+    <section id="timeline" class="tab-content">
+        <h2><i class="fas fa-clock"></i> לו"ז יום האירוע</h2>
+        <div id="timeline-container">
+            <div class="timeline-item">
+                <input type="time" class="time-input" value="08:00">
+                <input type="text" placeholder="מה קורה?" value="השכמה">
+            </div>
+            <div class="timeline-item">
+                <input type="time" class="time-input" value="10:00">
+                <input type="text" placeholder="מה קורה?" value="הגעת מאפרת">
+            </div>
+        </div>
+        <div style="text-align:center;"><button class="add-btn" onclick="addTimelineItem()"><i class="fas fa-plus"></i> הוסף שורה</button></div>
+    </section>
+
+    <section id="branding" class="tab-content">
+        <h2><i class="fas fa-gift"></i> מיתוג ואקסטרות</h2>
+        <div class="vendor-grid" id="extras-grid">
+            <div class="vendor-card">
+                <input type="text" class="card-title-input" value="מניפות">
+                <div class="form-group"><label>ספק</label><input type="text" value="אלי אקספרס"></div>
+                <div class="form-group"><label>מחיר (₪)</label><input type="number" class="price-input" value="300" oninput="calculateBudget()"></div>
+                <div class="form-group"><label>סטטוס</label><select><option>הוזמן</option><option>הגיע</option></select></div>
+            </div>
+        </div>
+        <div style="text-align:center;"><button class="add-btn" onclick="addBrandingCategory()"><i class="fas fa-plus"></i> הוסף קטגוריה</button></div>
+    </section>
+
+    <section id="playlist" class="tab-content">
+        <h2><i class="fas fa-music"></i> פלייליסט</h2>
+        <div id="playlist-container">
+            <div class="song-item">
+                <i class="fas fa-play-circle" style="color:var(--accent)"></i>
+                <input type="text" placeholder="שם השיר" value="כניסה לחופה">
+                <input type="text" placeholder="קישור ליוטיוב">
+            </div>
+        </div>
+        <div style="text-align:center;"><button class="add-btn" onclick="addSong()"><i class="fas fa-plus"></i> הוסף שיר</button></div>
+    </section>
+
+    <section id="flowers" class="tab-content">
+        <h2><i class="fas fa-seedling"></i> עיצוב ופרחים</h2>
+        <div class="vendor-grid" id="flowers-grid">
+            <div class="vendor-card">
+                <input type="text" class="card-title-input" value="סידור פרחים">
+                <div class="form-group"><label>ספק</label><input type="text"></div>
+                <div class="form-group"><label>מחיר (₪)</label><input type="number" class="price-input" oninput="calculateBudget()"></div>
+
+                <div class="form-group">
+                    <label>לוח השראה (גרור תמונה):</label>
+                    <div class="drop-zone" id="drop-zone">
+                        <div class="drop-text"><i class="fas fa-cloud-upload-alt"></i>העלה תמונה</div>
+                        <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+                        <div class="polaroid-frame" id="polaroid-frame">
+                            <img id="polaroid-img" src="" alt="Moodboard">
+                            <div class="polaroid-caption">השראה</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="vendors" class="tab-content">
+        <h2><i class="fas fa-users"></i> ספקים מרכזיים</h2>
+        <div class="vendor-grid" id="vendors-grid">
+            <div class="vendor-card">
+                <input type="text" class="card-title-input" value="איפור ושיער">
+                <div class="form-group"><label>ספק</label><input type="text" value="דנה כהן"></div>
+                <div class="form-group"><label>מחיר (₪)</label><input type="number" class="price-input" value="2500" oninput="calculateBudget()"></div>
+                <div class="form-group"><label>סטטוס</label><select><option>שולמה מקדמה</option><option>שולם מלא</option></select></div>
+            </div>
+            <div class="vendor-card">
+                <input type="text" class="card-title-input" value="שמלת כלה">
+                <div class="form-group"><label>ספק</label><input type="text" value="סטודיו לבן"></div>
+                <div class="form-group"><label>מחיר (₪)</label><input type="number" class="price-input" value="8000" oninput="calculateBudget()"></div>
+            </div>
+        </div>
+        <div style="text-align:center;"><button class="add-btn" onclick="addVendor('vendors-grid')"><i class="fas fa-plus"></i> הוסף ספק</button></div>
+    </section>
+</main>
+
+```
+
+</div>
+
+<div class="bottom-bar">
+<div class="budget-display">סה"כ: <span class="budget-amount" id="totalBudget">₪0</span></div>
+<div class="sync-status"><i class="fas fa-circle-notch fa-spin"></i> מתחבר...</div>
+</div>
+
+<script>
+// Tabs
+function openTab(evt, tabName) {
+var i, tabContent, tabBtn;
+tabContent = document.getElementsByClassName("tab-content");
+for (i = 0; i < tabContent.length; i++) { tabContent[i].classList.remove("active"); }
+tabBtn = document.getElementsByClassName("tab-btn");
+for (i = 0; i < tabBtn.length; i++) { tabBtn[i].classList.remove("active"); }
+document.getElementById(tabName).classList.add("active");
+if(evt) evt.currentTarget.classList.add("active");
+}
+
+```
+// Add Functions
+function addVendor(gridId) {
+    const grid = document.getElementById(gridId);
+    const template = grid.querySelector('.vendor-card').cloneNode(true);
+    resetInputs(template);
+    if(template.querySelector('.drop-zone')) template.querySelector('.drop-zone').remove(); // No dup images
+    grid.appendChild(template);
+    if(window.attachListeners) window.attachListeners();
+}
+
+function addBrandingCategory() {
+    const grid = document.getElementById('extras-grid');
+    const template = grid.querySelector('.vendor-card').cloneNode(true);
+    resetInputs(template);
+    template.querySelector('.card-title-input').value = "קטגוריה חדשה";
+    grid.appendChild(template);
+    if(window.attachListeners) window.attachListeners();
+}
+
+function addTimelineItem() {
+    const container = document.getElementById('timeline-container');
+    const template = container.querySelector('.timeline-item').cloneNode(true);
+    resetInputs(template);
+    container.appendChild(template);
+    if(window.attachListeners) window.attachListeners();
+}
+
+function addSong() {
+    const container = document.getElementById('playlist-container');
+    const template = container.querySelector('.song-item').cloneNode(true);
+    resetInputs(template);
+    container.appendChild(template);
+    if(window.attachListeners) window.attachListeners();
+}
+
+function resetInputs(element) {
+    const inputs = element.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        if(!input.classList.contains('card-title-input')) input.value = '';
+        input.removeAttribute('id'); input.removeAttribute('data-id');
+    });
+    const selects = element.querySelectorAll('select');
+    selects.forEach(select => select.selectedIndex = 0);
+}
+
+// Budget
+function calculateBudget() {
+    const prices = document.querySelectorAll('.price-input');
+    let total = 0;
+    prices.forEach(input => {
+        const val = parseFloat(input.value);
+        if(!isNaN(val)) total += val;
+    });
+    document.getElementById('totalBudget').innerText = '₪' + total.toLocaleString();
+}
+
+// Countdown
+let eventDate = new Date("2026-06-15T19:00:00").getTime();
+function updateTimer() {
+    const now = new Date().getTime();
+    const distance = eventDate - now;
+    if (distance < 0) return;
+    document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+    document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    document.getElementById("minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000);
+}
+function editDate() { document.getElementById('eventDateInput').style.display = 'block'; }
+function updateEventDate(val) {
+    if(val) {
+        eventDate = new Date(val + "T19:00:00").getTime();
+        document.getElementById('eventDateInput').style.display = 'none';
+        if(window.saveToCloud) window.saveToCloud();
+    }
+}
+setInterval(updateTimer, 1000);
+
+// Confetti & Progress
+function fireConfetti() {
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#d4a5a5', '#9caf88', '#d4af37'] });
+}
+function updateProgress() {
+    const checkboxes = document.querySelectorAll('.task-checkbox');
+    const total = checkboxes.length;
+    let checked = 0;
+    checkboxes.forEach(box => { if (box.checked) checked++; });
+    const percentage = total === 0 ? 0 : Math.round((checked / total) * 100);
+    document.getElementById('progressBar').style.width = percentage + '%';
+    document.getElementById('progressText').innerText = percentage + '%';
+    if(percentage === 100 && total > 0) setTimeout(fireConfetti, 500);
+}
+function handleTaskChange(checkbox) {
+    const item = checkbox.closest('.task-item');
+    if (checkbox.checked) { item.classList.add('completed'); fireConfetti(); }
+    else { item.classList.remove('completed'); }
+    updateProgress();
+    if(window.saveToCloud) window.saveToCloud();
+}
+
+// Drag & Drop
+const dropZone = document.getElementById('drop-zone');
+const fileElem = document.getElementById('fileElem');
+if(dropZone) {
+    dropZone.addEventListener('click', () => fileElem.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+}
+function handleFiles(files) {
+    if(files.length && files[0].type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('polaroid-img').src = e.target.result;
+            document.getElementById('polaroid-frame').style.display = 'block';
+            document.querySelector('.drop-text').style.display = 'none';
+            if(window.saveToCloud) window.saveToCloud();
+        };
+        reader.readAsDataURL(files[0]);
+    }
+}
+
+```
+
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+```
+// *** הדבק כאן את הקונפיגורציה שקיבלת מפיירבייס ***
+const firebaseConfig = {
+    apiKey: "AIzaSyDYUhtt6X97kqve7WQOstbhJPQ88em096c",
+    authDomain: "our-wedding-1c7be.firebaseapp.com",
+    databaseURL: "https://our-wedding-1c7be-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "our-wedding-1c7be",
+    storageBucket: "our-wedding-1c7be.firebasestorage.app",
+    messagingSenderId: "1051998218262",
+    appId: "1:1051998218262:web:738cba6dd9b555dae82d37",
+    measurementId: "G-LP7NPTM6X9"
+  };
+
+    // ... הדבק את הקוד מה-Console כאן ..
+// *************************************************
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+function saveToCloud() {
+    document.querySelector('.sync-status').innerHTML = '<i class="fas fa-sync fa-spin"></i> שומר...';
+    const data = {};
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach((input, index) => {
+        if (!input.id && !input.dataset.id) input.dataset.id = 'field_' + index;
+        const id = input.id || input.dataset.id;
+        if (input.type === 'checkbox') data[id] = input.checked;
+        else if(input.type !== 'file') data[id] = input.value;
+    });
+
+    const moodImg = document.getElementById('polaroid-img').src;
+    if(moodImg && moodImg.length < 500000) data['moodboardImage'] = moodImg;
+
+    set(ref(db, 'weddingData'), data).then(() => {
+        document.querySelector('.sync-status').innerHTML = '<i class="fas fa-check"></i> נשמר';
+    });
+}
+
+onValue(ref(db, 'weddingData'), (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach((input, index) => {
+            const id = input.id || input.dataset.id || 'field_' + index;
+            if (data[id] !== undefined) {
+                if (input.type === 'checkbox') {
+                    input.checked = data[id];
+                    const item = input.closest('.task-item');
+                    if(item) data[id] ? item.classList.add('completed') : item.classList.remove('completed');
+                } else if (input.type !== 'file') {
+                    input.value = data[id];
+                }
+            }
+        });
+
+        if(data['moodboardImage']) {
+            document.getElementById('polaroid-img').src = data['moodboardImage'];
+            document.getElementById('polaroid-frame').style.display = 'block';
+            document.querySelector('.drop-text').style.display = 'none';
+        }
+        if(data['eventDateInput']) {
+            eventDate = new Date(data['eventDateInput'] + "T19:00:00").getTime();
+        }
+
+        updateProgress();
+        calculateBudget();
+    }
+});
+
+function attachListeners() {
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.removeEventListener('change', saveToCloud);
+        input.addEventListener('change', saveToCloud);
+    });
+}
+
+window.saveToCloud = saveToCloud;
+window.attachListeners = attachListeners;
+document.addEventListener('DOMContentLoaded', attachListeners);
+
+```
+
+</script>
+
+</body>
+</html>
